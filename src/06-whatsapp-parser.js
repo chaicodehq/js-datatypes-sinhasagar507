@@ -40,4 +40,50 @@
  */
 export function parseWhatsAppMessage(message) {
   // Your code here
+  // 1. Validation: Must be a string
+  if (typeof message !== 'string') return null;
+
+  // 2. Find key indices for splitting
+  const commaIndex = message.indexOf(", ");
+  const dashIndex = message.indexOf(" - ");
+  
+  // Validation: Check if basic structure exists
+  if (commaIndex === -1 || dashIndex === -1) return null;
+
+  // Find the first colon-space AFTER the dash (this separates sender from text)
+  const colonIndex = message.indexOf(": ", dashIndex);
+  if (colonIndex === -1) return null;
+
+  // 3. Extract parts using slice
+  const date = message.slice(0, commaIndex);
+  const time = message.slice(commaIndex + 2, dashIndex);
+  const sender = message.slice(dashIndex + 3, colonIndex);
+  const text = message.slice(colonIndex + 2).trim();
+
+  // 4. Calculate word count
+  // Split by whitespace and filter out empty strings to get accurate count
+  const wordCount = text.split(/\s+/).filter(word => word.length > 0).length;
+
+  // 5. Sentiment Detection
+  const lowerText = text.toLowerCase();
+  let sentiment = "neutral";
+
+  const isFunny = lowerText.includes("😂") || lowerText.includes(":)") || lowerText.includes("haha");
+  const isLove = lowerText.includes("❤") || lowerText.includes("love") || lowerText.includes("pyaar");
+
+  if (isFunny) {
+    sentiment = "funny"; // Priority
+  } else if (isLove) {
+    sentiment = "love";
+  }
+
+  // 6. Return the result
+  return {
+    date,
+    time,
+    sender,
+    text,
+    wordCount,
+    sentiment
+  };
 }

@@ -42,4 +42,60 @@
  */
 export function generateReportCard(student) {
   // Your code here
+  // 1. Basic Validation
+  if (!student || typeof student !== 'object') return null;
+  if (typeof student.name !== 'string' || student.name.trim() === "") return null;
+  
+  const marks = student.marks;
+  if (!marks || typeof marks !== 'object' || Object.keys(marks).length === 0) return null;
+
+  // 2. Validate Marks (Must be numbers between 0-100)
+  const entries = Object.entries(marks);
+  for (const [subject, score] of entries) {
+    if (typeof score !== 'number' || score < 0 || score > 100 || isNaN(score)) {
+      return null;
+    }
+  }
+
+  // 3. Core Calculations
+  const subjectCount = entries.length;
+  const markValues = Object.values(marks);
+  
+  const totalMarks = markValues.reduce((sum, val) => sum + val, 0);
+  const percentage = parseFloat(((totalMarks / (subjectCount * 100)) * 100).toFixed(2));
+
+  // 4. Determine Grade
+  let grade;
+  if (percentage >= 90) grade = "A+";
+  else if (percentage >= 80) grade = "A";
+  else if (percentage >= 70) grade = "B";
+  else if (percentage >= 60) grade = "C";
+  else if (percentage >= 40) grade = "D";
+  else grade = "F";
+
+  // 5. Subject Analysis (Highest, Lowest, Passed, Failed)
+  // Using reduce to find keys based on values
+  const highestSubject = entries.reduce((max, curr) => curr[1] > max[1] ? curr : max)[0];
+  const lowestSubject = entries.reduce((min, curr) => curr[1] < min[1] ? curr : min)[0];
+
+  const passedSubjects = entries
+    .filter(([_, score]) => score >= 40)
+    .map(([subject]) => subject);
+
+  const failedSubjects = entries
+    .filter(([_, score]) => score < 40)
+    .map(([subject]) => subject);
+
+  // 6. Return the full analysis
+  return {
+    name: student.name,
+    totalMarks,
+    percentage,
+    grade,
+    highestSubject,
+    lowestSubject,
+    passedSubjects,
+    failedSubjects,
+    subjectCount
+  };
 }

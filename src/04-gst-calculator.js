@@ -40,4 +40,45 @@
  */
 export function calculateGST(amount, category) {
   // Your code here
+  if (typeof amount !== 'number' || !Number.isFinite(amount) || amount <= 0) {
+    return null;
+  }
+
+  // 2. Validation: Category must be a string
+  if (typeof category !== 'string') {
+    return null;
+  }
+
+  // 3. Define GST Rates mapping
+  const gstRates = {
+    "essential": 0,
+    "food": 5,
+    "standard": 12,
+    "electronics": 18,
+    "luxury": 28
+  };
+
+  // 4. Check if category exists (case-insensitive)
+  const normalizedCategory = category.toLowerCase();
+  if (!(normalizedCategory in gstRates)) {
+    return null;
+  }
+
+  const gstRate = gstRates[normalizedCategory];
+
+  // 5. Perform Calculations
+  const rawGstAmount = (amount * gstRate) / 100;
+  const rawTotalAmount = amount + rawGstAmount;
+
+  // 6. Rounding to 2 decimal places
+  const gstAmount = parseFloat(rawGstAmount.toFixed(2));
+  const totalAmount = parseFloat(rawTotalAmount.toFixed(2));
+
+  // 7. Return the formatted billing object
+  return {
+    baseAmount: amount,
+    gstRate: gstRate,
+    gstAmount: gstAmount,
+    totalAmount: totalAmount
+  };
 }

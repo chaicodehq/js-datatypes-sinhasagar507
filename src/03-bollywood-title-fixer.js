@@ -31,4 +31,30 @@
  */
 export function fixBollywoodTitle(title) {
   // Your code here
+  // 1. Validation: Must be a string and not just whitespace
+  if (typeof title !== 'string' || title.trim() === "") {
+    return "";
+  }
+
+  // 2. Define the lowercase exceptions
+  const exceptions = ["ka", "ki", "ke", "se", "aur", "ya", "the", "of", "in", "a", "an"];
+
+  // 3. Clean spaces and split into an array
+  // .trim() handles ends, split(/\s+/) handles multiple spaces in the middle
+  const words = title.trim().split(/\s+/);
+
+  const formattedWords = words.map((word, index) => {
+    const lowerWord = word.toLowerCase();
+
+    // 4. Rule: Always capitalize the first word OR words not in the exception list
+    if (index === 0 || !exceptions.includes(lowerWord)) {
+      return lowerWord.charAt(0).toUpperCase() + lowerWord.slice(1);
+    }
+
+    // 5. Otherwise, keep it lowercase (for "ka", "ki", etc.)
+    return lowerWord;
+  });
+
+  // 6. Join them back with a single space
+  return formattedWords.join(" ");
 }

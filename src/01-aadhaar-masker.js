@@ -29,4 +29,21 @@
  */
 export function maskAadhaar(aadhaarNumber) {
   // Your code here
+  // 1. Validation: Must be a string
+  if (typeof aadhaarNumber !== 'string') {
+    return "INVALID";
+  }
+
+  // 2. Validation: Length must be exactly 12 and strictly numeric
+  // Combining length and digit check into one regex for efficiency
+  if (aadhaarNumber.length !== 12 || !/^\d+$/.test(aadhaarNumber)) {
+    return "INVALID";
+  }
+
+  // 3. Extract the last 4 digits
+  const lastFour = aadhaarNumber.slice(-4);
+
+  // 4. Return the formatted masked string
+  // We use "XXXX-XXXX-" as the prefix per the requirements
+  return `XXXX-XXXX-${lastFour}`;
 }
